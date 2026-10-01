@@ -1,0 +1,401 @@
+import Header from "@/components/Header";
+import Callout from "@/components/Callout";
+import TestResults from "@/components/TestResults";
+
+<Header />
+
+<div className="mx-auto max-w-7xl px-6">
+  <div className="grid grid-cols-1 gap-12 lg:grid-cols-[220px_minmax(0,760px)]">
+
+    <aside className="hidden lg:block">
+      <div className="sticky top-24 py-10">
+        <div className="mb-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          On this page
+        </div>
+
+        <nav className="space-y-2 text-sm text-muted-foreground">
+          <a
+            className="block transition hover:text-foreground"
+            href="#introduction"
+          >
+            Introduction
+          </a>
+
+          <a
+            className="block transition hover:text-foreground"
+            href="#what-youll-build"
+          >
+            What you'll build
+          </a>
+
+          <a
+            className="block transition hover:text-foreground"
+            href="#prerequisites"
+          >
+            Prerequisites
+          </a>
+
+          <a
+            className="block transition hover:text-foreground"
+            href="#setup"
+          >
+            Setup
+          </a>
+
+          <a
+            className="block transition hover:text-foreground"
+            href="#record-tests"
+          >
+            Record tests
+          </a>
+
+          <a
+            className="block transition hover:text-foreground"
+            href="#run-tests"
+          >
+            Run tests
+          </a>
+
+          <a
+            className="block transition hover:text-foreground"
+            href="#lessons"
+          >
+            What I learned
+          </a>
+        </nav>
+      </div>
+    </aside>
+
+    <main className="min-w-0 py-12 lg:py-16">
+
+      <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-muted px-3 py-1.5 text-xs font-medium text-muted-foreground">
+        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+        Keploy Go Quickstart
+      </div>
+
+      # From Zero to API Tests
+
+      ## Running a Go application with Keploy
+
+      <div className="mb-8 max-w-2xl text-lg leading-8 text-muted-foreground">
+        A beginner-friendly walkthrough of my first Keploy Go quickstart using
+        **Mux + MySQL** — from starting the application to recording and
+        replaying API tests.
+      </div>
+
+      <div className="mb-8 grid grid-cols-1 gap-3 sm:grid-cols-3">
+        <div className="rounded-xl border border-border bg-card p-4">
+          <div className="mb-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+            Stack
+          </div>
+
+          <div className="font-semibold text-foreground">
+            Go + MySQL
+          </div>
+        </div>
+
+        <div className="rounded-xl border border-border bg-card p-4">
+          <div className="mb-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+            Tool
+          </div>
+
+          <div className="font-semibold text-foreground">
+            Keploy
+          </div>
+        </div>
+
+        <div className="rounded-xl border border-border bg-card p-4">
+          <div className="mb-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+            Result
+          </div>
+
+          <div className="font-semibold text-foreground">
+            5 / 5 passed
+          </div>
+        </div>
+      </div>
+
+      <Callout type="success" title="Quickstart completed">
+        The final Keploy test run produced **5 tests, with all 5 passing and 0 failing**.
+      </Callout>
+
+      ## Introduction
+
+      If you are new to Keploy, the basic idea is simple: instead of manually writing every API test from scratch, Keploy can observe your application's traffic, generate test cases from that traffic, and replay those tests later.
+
+      In this tutorial, I'll walk through what I actually did while running Keploy with a Go URL-shortener sample backed by MySQL.
+
+      ## What you'll build
+
+      By the end, you will understand how to:
+
+      - run the Go + MySQL sample application;
+      - start Keploy recording;
+      - generate real API traffic;
+      - create Keploy test cases from that traffic;
+      - replay those tests;
+      - understand the test results.
+
+      ## Prerequisites
+
+      You should have:
+
+      - Go installed;
+      - Docker installed;
+      - Keploy CLI installed;
+      - Ubuntu/WSL available on Windows if you are following the same setup;
+      - a terminal and `curl`.
+
+      <Callout type="info" title="Why WSL?">
+        I ran the Linux/WSL route for this quickstart. The important point is that the application and Keploy run in the same Linux environment, while Docker Desktop provides the container runtime.
+      </Callout>
+
+      ## Setup
+
+      ### 1. Clone the sample repository
+
+      First, I cloned Keploy's Go samples repository:
+
+      ```bash
+      git clone https://github.com/keploy/samples-go.git
+      ```
+
+      Then I moved into the Mux + MySQL sample:
+
+      ```bash
+      cd samples-go/mux-mysql
+      ```
+
+      **Why?**
+
+      This sample already contains a small Go application with HTTP routes and MySQL integration, so I could focus on learning how Keploy works instead of building an application from scratch.
+
+      ### 2. Download the Go dependencies
+
+      ```bash
+      go mod download
+      ```
+
+      This downloads the Go modules required by the application.
+
+      ### 3. Start MySQL
+
+      The application needs a MySQL database, so I started MySQL inside Docker:
+
+      ```bash
+      docker run -p 3306:3306 --rm --name mysql -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mysql:latest
+      ```
+
+      Here:
+
+      - `-p 3306:3306` exposes MySQL on port 3306;
+      - `--name mysql` gives the container a simple name;
+      - `MYSQL_ROOT_PASSWORD=my-secret-pw` sets the root password;
+      - `--rm` removes the container after it stops;
+      - `-d` runs the container in the background.
+
+      ### 4. Set the database connection string
+
+      I then configured the application with the MySQL connection details:
+
+      ```bash
+      export ConnectionString="root:my-secret-pw@tcp(localhost:3306)/mysql"
+      ```
+
+      This tells the Go application how to connect to the MySQL database running in Docker.
+
+      ### 5. Build the application
+
+      Before starting Keploy, I built the Go application:
+
+      ```bash
+      go build -o main
+      ```
+
+      This creates an executable named `main`.
+
+      ## Record tests
+
+      ### 6. Start Keploy recording
+
+      This is where Keploy becomes part of the application run:
+
+      ```bash
+      sudo env PATH=/usr/local/go/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin ConnectionString="$ConnectionString" keploy record -c "./main"
+      ```
+
+      The important part is:
+
+      ```bash
+      keploy record -c "./main"
+      ```
+
+      The `-c` option tells Keploy which application command it should run while recording.
+
+      Keploy then starts the application and waits for API traffic.
+
+      When recording started successfully, I saw:
+
+      ```text
+      Keploy agent is ready to record test cases and mocks.
+      Server is running on port:8080
+      ```
+
+      <Callout type="info" title="What is happening here?">
+        Keploy is observing the application's API traffic while the application is running. The requests I send during this period become the basis for the generated test cases.
+      </Callout>
+
+      ### 7. Send real API requests
+
+      With Keploy recording, I opened another terminal and sent requests to the application.
+
+      The first important request was:
+
+      ```bash
+      curl -X POST http://localhost:8080/create -H "Content-Type: application/json" -d '{"link":"https://keploy.io"}'
+      ```
+
+      The application returned:
+
+      ```json
+      {
+        "message": "Converted",
+        "link": "http://localhost:8080/links/1",
+        "status": true
+      }
+      ```
+
+      I then tested the generated link:
+
+      ```bash
+      curl http://localhost:8080/links/1
+      ```
+
+      The response was:
+
+      ```text
+      <a href="https://keploy.io">Temporary Redirect</a>.
+      ```
+
+      ### My small debugging moment
+
+      Initially, I sent the URL using a field called `url`:
+
+      ```json
+      {
+        "url": "https://keploy.io"
+      }
+      ```
+
+      The application rejected it with an invalid URL message.
+
+      Instead of changing the Go application, I checked the existing controller code and found that the request model uses the field:
+
+      ```text
+      link
+      ```
+
+      So I changed my request to:
+
+      ```json
+      {
+        "link": "https://keploy.io"
+      }
+      ```
+
+      That worked.
+
+      <Callout type="tip" title="Lesson from this">
+        When an API rejects a request, check the application's existing request model or controller before assuming the application itself is broken. In my case, the issue was simply using the wrong JSON field name.
+      </Callout>
+
+      ### 8. Stop recording
+
+      After generating the required API traffic, I stopped the recording process with:
+
+      ```text
+      Ctrl + C
+      ```
+
+      Keploy then processed the recorded traffic and prepared the generated tests and mocks.
+
+      ## Run tests
+
+      One of the useful parts of the workflow is that I did not have to manually recreate all of those requests as test cases.
+
+      Keploy generated test cases from the traffic that was recorded.
+
+      The resulting test set was:
+
+      ```text
+      test-set-0
+      ```
+
+      It contained five tests:
+
+      <TestResults
+        testSet="test-set-0"
+        tests={[
+          "post-create-1",
+          "post-create-2",
+          "post-create-3",
+          "get-links-by-id-1",
+          "get-links-by-id-2"
+        ]}
+        passed={5}
+        failed={0}
+      />
+
+      Keploy then replayed those tests against the application.
+
+      ### Final result
+
+      <Callout type="success" title="5 / 5 tests passed">
+        All **5 tests passed**, with **0 failures**. Keploy reported the run as `verified_green`.
+      </Callout>
+
+      This was the important checkpoint for me because it showed that the API behavior captured during recording could be replayed successfully.
+
+      ### What `keploy test` is doing
+
+      The basic idea is:
+
+      ```text
+      Real API traffic
+             ↓
+      Keploy recording
+             ↓
+      Generated test cases
+             ↓
+      Test replay
+             ↓
+      Compare the application behavior
+      ```
+
+      During recording, Keploy observes the application's interactions.
+
+      During testing, those recorded interactions are replayed so the application can be checked again without manually recreating every test case.
+
+      ## What I learned
+
+      The biggest thing I learned from this quickstart was that Keploy is not just another tool where I have to manually write a large collection of API test cases.
+
+      The workflow I experienced was:
+
+      1. Start the application.
+      2. Put Keploy into recording mode.
+      3. Send real API requests.
+      4. Stop recording.
+      5. Let Keploy generate the test cases.
+      6. Replay those tests.
+      7. Check whether they pass.
+
+      I also learned that understanding the application itself is still important. When my first request failed, looking at the existing Go controller immediately showed me that the API expected `link` rather than `url`.
+
+      <Callout type="success" title="Quickstart takeaway">
+        My final result was a working Go + MySQL application with Keploy-generated API tests, followed by a **5/5 passing test run**.
+      </Callout>
+
+    </main>
+  </div>
+</div>
