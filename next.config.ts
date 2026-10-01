@@ -6,6 +6,10 @@ const withMDX = createMDX({
   options: {
     rehypePlugins: [
       [
+        "rehype-pre-language",
+        "data-language",
+      ],
+      [
         "rehype-pretty-code",
         {
           theme: {

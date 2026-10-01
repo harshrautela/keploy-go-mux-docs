@@ -2,55 +2,261 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
-  --muted: #f5f5f5;
-  --muted-foreground: #666666;
-  --border: #e5e5e5;
+  --foreground: #18181b;
+
+  --muted: #f4f4f5;
+  --muted-foreground: #52525b;
+
+  --border: #e4e4e7;
+  --border-strong: #d4d4d8;
+
   --card: #ffffff;
+
+  --accent: #c2410c;
+  --accent-hover: #9a3412;
+  --accent-soft: #fff4ed;
 }
 
 .dark {
-  --background: #0a0a0a;
-  --foreground: #ededed;
-  --muted: #171717;
+  --background: #09090b;
+  --foreground: #fafafa;
+
+  --muted: #18181b;
   --muted-foreground: #a1a1aa;
+
   --border: #27272a;
+  --border-strong: #3f3f46;
+
   --card: #111111;
+
+  --accent: #fb923c;
+  --accent-hover: #fdba74;
+  --accent-soft: #24160c;
 }
+
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
+
   --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+
   --color-card: var(--card);
+
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-soft: var(--accent-soft);
+}
+
+* {
+  border-color: var(--border);
 }
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 6rem;
 }
 
 body {
+  margin: 0;
   background: var(--background);
   color: var(--foreground);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 ::selection {
-  background: #6366f1;
-  color: white;
+  background: var(--accent-soft);
+  color: var(--accent);
 }
 
-.prose-code code {
-  font-size: 0.9em;
-}
+/* =================================
+   Code blocks
+================================= */
 
 pre {
-  overflow-x: auto;
+  box-sizing: border-box;
+  margin: 0;
+  width: max-content;
+  min-width: 100%;
+  overflow: visible;
+
+  background: transparent !important;
+
+  padding: 1rem;
+
+  font-size: 0.8125rem;
+  line-height: 1.7;
+
+  color: #e6edf3;
 }
 
 pre code {
   display: block;
-  padding: 1rem;
-  line-height: 1.7;
+
+  width: max-content;
+  min-width: 100%;
+
+  margin: 0;
+  padding: 0;
+
+  background: transparent !important;
+
+  color: #e6edf3;
+
+  font-family:
+    ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Monaco,
+    Consolas,
+    "Liberation Mono",
+    "Courier New",
+    monospace;
+
+  white-space: pre;
+}
+
+pre code span {
+  background: transparent !important;
+}
+
+/* =================================
+   Shiki
+================================= */
+
+[data-rehype-pretty-code-fragment] {
+  width: max-content;
+  min-width: 100%;
+  background: transparent !important;
+}
+
+[data-rehype-pretty-code-fragment] pre {
+  background: transparent !important;
+}
+
+[data-rehype-pretty-code-fragment] code {
+  background: transparent !important;
+}
+
+/*
+ * Shiki is configured with github-dark,
+ * so always use its dark token colors.
+ */
+
+[data-rehype-pretty-code-fragment] code span {
+  background: transparent !important;
+}
+
+/* =================================
+   Horizontal scrolling
+================================= */
+
+pre::-webkit-scrollbar {
+  height: 8px;
+}
+
+pre::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+pre::-webkit-scrollbar-thumb {
+  background: #3f3f46;
+  border-radius: 999px;
+}
+
+pre {
+  scrollbar-width: thin;
+  scrollbar-color: #3f3f46 transparent;
+}
+
+/* =================================
+   Inline code
+================================= */
+
+:not(pre) > code {
+  font-size: 0.9em;
+}
+
+/* =================================
+   Prose
+================================= */
+
+.prose {
+  color: var(--muted-foreground);
+  font-size: 1rem;
+  line-height: 1.75;
+}
+
+.prose h2,
+.prose h3,
+.prose h4 {
+  color: var(--foreground);
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  scroll-margin-top: 6rem;
+}
+
+.prose h2 {
+  margin-top: 3.5rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+}
+
+.prose h3 {
+  margin-top: 2.25rem;
+}
+
+.prose strong {
+  color: var(--foreground);
+  font-weight: 620;
+}
+
+.prose a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-color: color-mix(
+    in srgb,
+    var(--accent) 30%,
+    transparent
+  );
+  text-underline-offset: 3px;
+}
+
+.prose ul,
+.prose ol {
+  padding-left: 1.5rem;
+}
+
+.prose ul {
+  list-style-type: disc;
+}
+
+.prose ol {
+  list-style-type: decimal;
+}
+
+.prose li {
+  margin-top: 0.5rem;
+}
+
+.prose blockquote {
+  border-left: 3px solid var(--accent);
+  padding-left: 1rem;
+  color: var(--muted-foreground);
+}
+
+.prose .not-prose {
+  color: var(--foreground);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
