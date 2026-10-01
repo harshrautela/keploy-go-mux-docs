@@ -82,9 +82,12 @@ body {
 pre {
   box-sizing: border-box;
   margin: 0;
-  width: max-content;
-  min-width: 100%;
-  overflow: visible;
+
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+
+  overflow: hidden;
 
   background: transparent !important;
 
@@ -94,13 +97,18 @@ pre {
   line-height: 1.7;
 
   color: #e6edf3;
+
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 pre code {
   display: block;
 
-  width: max-content;
-  min-width: 100%;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
 
   margin: 0;
   padding: 0;
@@ -119,7 +127,10 @@ pre code {
     "Courier New",
     monospace;
 
-  white-space: pre;
+  white-space: inherit;
+
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 pre code span {
@@ -131,22 +142,41 @@ pre code span {
 ================================= */
 
 [data-rehype-pretty-code-fragment] {
-  width: max-content;
-  min-width: 100%;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+
   background: transparent !important;
 }
 
 [data-rehype-pretty-code-fragment] pre {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+
   background: transparent !important;
+
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 [data-rehype-pretty-code-fragment] code {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+
   background: transparent !important;
+
+  white-space: inherit;
+
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 /*
- * Shiki is configured with github-dark,
- * so always use its dark token colors.
+ * Keep Shiki token colors while allowing
+ * long commands to wrap inside the code block.
  */
 
 [data-rehype-pretty-code-fragment] code span {
@@ -154,25 +184,20 @@ pre code span {
 }
 
 /* =================================
-   Horizontal scrolling
+   Code scrollbar
 ================================= */
 
+/*
+ * Horizontal scrolling is intentionally disabled.
+ * Long commands wrap instead of being cut off.
+ */
+
 pre::-webkit-scrollbar {
-  height: 8px;
-}
-
-pre::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-pre::-webkit-scrollbar-thumb {
-  background: #3f3f46;
-  border-radius: 999px;
+  height: 0;
 }
 
 pre {
-  scrollbar-width: thin;
-  scrollbar-color: #3f3f46 transparent;
+  scrollbar-width: none;
 }
 
 /* =================================
