@@ -1,3 +1,11 @@
+import type { ComponentType, SVGProps } from "react";
+import {
+  CheckCircleIcon,
+  InfoIcon,
+  SparkleIcon,
+  WarningIcon,
+} from "./icons";
+
 type CalloutType = "info" | "tip" | "warning" | "success";
 
 interface CalloutProps {
@@ -9,30 +17,35 @@ interface CalloutProps {
 const styles: Record<
   CalloutType,
   {
-    border: string;
-    background: string;
-    icon: string;
+    container: string;
+    bar: string;
+    iconWrap: string;
+    Icon: ComponentType<SVGProps<SVGSVGElement>>;
   }
 > = {
   info: {
-    border: "border-blue-500/30",
-    background: "bg-blue-500/10",
-    icon: "💡",
+    container: "border-blue-500/25 bg-blue-500/[0.06]",
+    bar: "bg-blue-500",
+    iconWrap: "bg-blue-500/10 text-blue-500",
+    Icon: InfoIcon,
   },
   tip: {
-    border: "border-emerald-500/30",
-    background: "bg-emerald-500/10",
-    icon: "✨",
+    container: "border-violet-500/25 bg-violet-500/[0.06]",
+    bar: "bg-violet-500",
+    iconWrap: "bg-violet-500/10 text-violet-500",
+    Icon: SparkleIcon,
   },
   warning: {
-    border: "border-amber-500/30",
-    background: "bg-amber-500/10",
-    icon: "⚠️",
+    container: "border-amber-500/25 bg-amber-500/[0.06]",
+    bar: "bg-amber-500",
+    iconWrap: "bg-amber-500/10 text-amber-600 dark:text-amber-400",
+    Icon: WarningIcon,
   },
   success: {
-    border: "border-green-500/30",
-    background: "bg-green-500/10",
-    icon: "✅",
+    container: "border-emerald-500/25 bg-emerald-500/[0.06]",
+    bar: "bg-emerald-500",
+    iconWrap: "bg-emerald-500/10 text-emerald-500",
+    Icon: CheckCircleIcon,
   },
 };
 
@@ -42,24 +55,32 @@ export default function Callout({
   children,
 }: CalloutProps) {
   const style = styles[type];
+  const { Icon } = style;
 
   return (
     <div
-      className={`my-6 rounded-xl border ${style.border} ${style.background} p-5`}
+      className={`relative my-6 overflow-hidden rounded-xl border pl-5 pr-5 py-4 transition-colors duration-300 ${style.container}`}
     >
-      <div className="flex gap-3">
-        <span className="text-lg" aria-hidden="true">
-          {style.icon}
+      <span
+        className={`absolute inset-y-0 left-0 w-[3px] ${style.bar}`}
+        aria-hidden="true"
+      />
+
+      <div className="flex gap-3.5">
+        <span
+          className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${style.iconWrap}`}
+        >
+          <Icon className="h-4 w-4" aria-hidden="true" />
         </span>
 
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           {title && (
-            <div className="mb-1 font-semibold text-foreground">
+            <div className="mb-1 text-[15px] font-semibold leading-6 text-foreground">
               {title}
             </div>
           )}
 
-          <div className="text-sm leading-6 text-muted-foreground">
+          <div className="text-sm leading-6 text-muted-foreground [&>*:last-child]:mb-0 [&>p]:mb-2">
             {children}
           </div>
         </div>

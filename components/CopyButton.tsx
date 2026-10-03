@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { CheckIcon, CopyIcon } from "./icons";
 
 interface CopyButtonProps {
   text: string;
@@ -8,6 +9,15 @@ interface CopyButtonProps {
 
 export default function CopyButton({ text }: CopyButtonProps) {
   const [copied, setCopied] = useState(false);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timer.current) {
+        clearTimeout(timer.current);
+      }
+    };
+  }, []);
 
   async function handleCopy() {
     try {
@@ -37,7 +47,11 @@ export default function CopyButton({ text }: CopyButtonProps) {
 
       setCopied(true);
 
-      setTimeout(() => {
+      if (timer.current) {
+        clearTimeout(timer.current);
+      }
+
+      timer.current = setTimeout(() => {
         setCopied(false);
       }, 2000);
     } catch (error) {
@@ -50,10 +64,30 @@ export default function CopyButton({ text }: CopyButtonProps) {
     <button
       type="button"
       onClick={handleCopy}
-      className="rounded-md border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-medium text-white/80 transition hover:bg-white/10 hover:text-white"
-      aria-label="Copy code"
+      className={`inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1.5 text-xs font-medium transition-all duration-200 ${
+        copied
+          ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-500"
+          : "border-border bg-transparent text-subtle-foreground hover:border-border-strong hover:bg-muted hover:text-foreground"
+      }`}
+      aria-label={copied ? "Code copied" : "Copy code"}
     >
-      {copied ? "Copied!" : "Copy"}
+      <span className="relative flex h-3.5 w-3.5 items-center justify-center">
+        <CopyIcon
+          className={`absolute h-3.5 w-3.5 transition-all duration-200 ${
+            copied ? "scale-50 opacity-0" : "scale-100 opacity-100"
+          }`}
+          aria-hidden="true"
+        />
+
+        <CheckIcon
+          className={`absolute h-3.5 w-3.5 transition-all duration-200 ${
+            copied ? "scale-100 opacity-100" : "scale-50 opacity-0"
+          }`}
+          aria-hidden="true"
+        />
+      </span>
+
+      <span className="hidden sm:inline">{copied ? "Copied" : "Copy"}</span>
     </button>
   );
 }

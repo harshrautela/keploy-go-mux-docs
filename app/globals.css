@@ -1,57 +1,93 @@
 @import "tailwindcss";
 
+/* =================================
+   Design tokens
+================================= */
+
 :root {
   --background: #ffffff;
+  --background-subtle: #fafafa;
   --foreground: #18181b;
 
   --muted: #f4f4f5;
   --muted-foreground: #52525b;
+  --subtle-foreground: #71717a;
 
   --border: #e4e4e7;
   --border-strong: #d4d4d8;
 
   --card: #ffffff;
+  --card-hover: #fafafa;
 
   --accent: #c2410c;
   --accent-hover: #9a3412;
   --accent-soft: #fff4ed;
+
+  --code-background: #fbfbfa;
+  --code-header: #f4f4f3;
+  --code-border: #e4e4e7;
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-code-mono), ui-monospace, SFMono-Regular, Menlo,
+    Consolas, monospace;
 }
 
 .dark {
   --background: #09090b;
+  --background-subtle: #0c0c0f;
   --foreground: #fafafa;
 
   --muted: #18181b;
   --muted-foreground: #a1a1aa;
+  --subtle-foreground: #8b8b94;
 
   --border: #27272a;
   --border-strong: #3f3f46;
 
-  --card: #111111;
+  --card: #101013;
+  --card-hover: #15151a;
 
   --accent: #fb923c;
   --accent-hover: #fdba74;
   --accent-soft: #24160c;
+
+  --code-background: #0d1117;
+  --code-header: #161b22;
+  --code-border: #27272a;
 }
 
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme inline {
   --color-background: var(--background);
+  --color-background-subtle: var(--background-subtle);
   --color-foreground: var(--foreground);
 
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
+  --color-subtle-foreground: var(--subtle-foreground);
 
   --color-border: var(--border);
   --color-border-strong: var(--border-strong);
 
   --color-card: var(--card);
+  --color-card-hover: var(--card-hover);
 
   --color-accent: var(--accent);
   --color-accent-hover: var(--accent-hover);
   --color-accent-soft: var(--accent-soft);
+
+  --color-code-background: var(--code-background);
+  --color-code-header: var(--code-header);
+  --color-code-border: var(--code-border);
+
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
 }
+
+/* =================================
+   Base
+================================= */
 
 * {
   border-color: var(--border);
@@ -60,19 +96,106 @@
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 6rem;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
   margin: 0;
   background: var(--background);
   color: var(--foreground);
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
 }
 
 ::selection {
   background: var(--accent-soft);
   color: var(--accent);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Page scrollbar, pointer devices only */
+
+@media (min-width: 1024px) {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-strong) transparent;
+  }
+
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background-color: var(--border-strong);
+    border: 3px solid var(--background);
+    border-radius: 9999px;
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background-color: var(--subtle-foreground);
+  }
+}
+
+/* =================================
+   Hero backdrop
+================================= */
+
+.hero-grid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 30rem;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+  mask-image: linear-gradient(to bottom, black, transparent 78%);
+  -webkit-mask-image: linear-gradient(to bottom, black, transparent 78%);
+}
+
+.hero-grid::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(
+      to right,
+      color-mix(in srgb, var(--border) 65%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--border) 65%, transparent) 1px,
+      transparent 1px
+    );
+  background-size: 56px 56px;
+}
+
+.hero-grid::after {
+  content: "";
+  position: absolute;
+  top: -20rem;
+  left: 50%;
+  width: 46rem;
+  height: 34rem;
+  transform: translateX(-50%);
+  background: radial-gradient(
+    closest-side,
+    color-mix(in srgb, var(--accent) 16%, transparent),
+    transparent
+  );
+  filter: blur(8px);
 }
 
 /* =================================
@@ -91,13 +214,16 @@ pre {
 
   background: transparent !important;
 
-  padding: 1rem;
+  padding: 1.125rem 1.25rem;
 
+  font-family: var(--font-mono);
   font-size: 0.8125rem;
-  line-height: 1.7;
+  line-height: 1.75;
+  font-variant-ligatures: none;
 
-  color: #e6edf3;
+  tab-size: 2;
 
+  /* Long commands wrap instead of being cut off. */
   white-space: pre-wrap;
   overflow-wrap: anywhere;
   word-break: break-word;
@@ -114,41 +240,44 @@ pre code {
   padding: 0;
 
   background: transparent !important;
+  border: 0;
 
-  color: #e6edf3;
-
-  font-family:
-    ui-monospace,
-    SFMono-Regular,
-    Menlo,
-    Monaco,
-    Consolas,
-    "Liberation Mono",
-    "Courier New",
-    monospace;
+  font-family: inherit;
+  font-size: inherit;
 
   white-space: inherit;
 
   overflow-wrap: anywhere;
   word-break: break-word;
+
+  /*
+   * Shiki sets `display: grid` inline for its line spans. Pinning the
+   * implicit column to minmax(0, 1fr) stops a long single-line command
+   * from sizing the track to max-content and overflowing the block.
+   */
+  grid-template-columns: minmax(0, 1fr);
 }
 
-pre code span {
-  background: transparent !important;
+pre code > span[data-line] {
+  min-width: 0;
+  white-space: inherit;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 /* =================================
    Shiki
 ================================= */
 
+[data-rehype-pretty-code-figure],
 [data-rehype-pretty-code-fragment] {
   width: 100%;
   min-width: 0;
   max-width: 100%;
-
   background: transparent !important;
 }
 
+[data-rehype-pretty-code-figure] pre,
 [data-rehype-pretty-code-fragment] pre {
   width: 100%;
   min-width: 0;
@@ -161,6 +290,7 @@ pre code span {
   word-break: break-word;
 }
 
+[data-rehype-pretty-code-figure] code,
 [data-rehype-pretty-code-fragment] code {
   width: 100%;
   min-width: 0;
@@ -175,22 +305,23 @@ pre code span {
 }
 
 /*
- * Keep Shiki token colors while allowing
- * long commands to wrap inside the code block.
+ * rehype-pretty-code emits --shiki-light and --shiki-dark on every token,
+ * so syntax colours can follow the active theme instead of being
+ * hard-coded to the dark palette.
  */
 
-[data-rehype-pretty-code-fragment] code span {
+pre code,
+pre code span {
+  color: var(--shiki-light, #3f3f46);
   background: transparent !important;
 }
 
-/* =================================
-   Code scrollbar
-================================= */
+.dark pre code,
+.dark pre code span {
+  color: var(--shiki-dark, #e6edf3);
+}
 
-/*
- * Horizontal scrolling is intentionally disabled.
- * Long commands wrap instead of being cut off.
- */
+/* Horizontal scrolling stays disabled: long lines wrap. */
 
 pre::-webkit-scrollbar {
   height: 0;
@@ -204,8 +335,131 @@ pre {
    Inline code
 ================================= */
 
+/*
+ * Scoped to prose parents so that <code> used inside a component (the
+ * test-result rows, for instance) keeps its own styling.
+ */
+
+:where(p, li, td, th, h1, h2, h3, h4, blockquote, strong, em, a) > code {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--muted);
+  padding: 0.125rem 0.375rem;
+
+  color: var(--foreground);
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  font-weight: 450;
+
+  overflow-wrap: anywhere;
+}
+
+/* Inline code inside a link or heading inherits that colour instead. */
+
+:where(a, h1, h2, h3, h4) > code {
+  color: inherit;
+}
+
 :not(pre) > code {
-  font-size: 0.9em;
+  font-family: var(--font-mono);
+}
+
+/* =================================
+   Heading anchors
+================================= */
+
+.heading-anchor {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 0.4rem;
+  color: var(--accent);
+  opacity: 0;
+  transform: translateX(-2px);
+  transition: opacity 150ms ease, transform 150ms ease;
+  text-decoration: none;
+  vertical-align: middle;
+}
+
+.group:hover > .heading-anchor,
+.heading-anchor:focus-visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* =================================
+   Motion
+================================= */
+
+@keyframes fade-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  70% {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+
+.animate-fade-rise {
+  animation: fade-rise 600ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-fade-in {
+  animation: fade-in 400ms ease both;
+}
+
+.animate-pulse-ring {
+  animation: pulse-ring 2.4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Test-result card reveal, driven by components/TestResults.tsx */
+
+[data-run="pending"] [data-bar] {
+  transform: scaleX(0) !important;
+}
+
+[data-run="pending"] [data-row] {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+/* Scroll reveal, driven by components/ScrollReveal.tsx */
+
+[data-reveal="pending"] {
+  opacity: 0;
+  transform: translateY(16px);
+}
+
+[data-reveal="shown"] {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 620ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 620ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* =================================
@@ -245,11 +499,7 @@ pre {
 .prose a {
   color: var(--accent);
   text-decoration: underline;
-  text-decoration-color: color-mix(
-    in srgb,
-    var(--accent) 30%,
-    transparent
-  );
+  text-decoration-color: color-mix(in srgb, var(--accent) 30%, transparent);
   text-underline-offset: 3px;
 }
 
@@ -280,8 +530,25 @@ pre {
   color: var(--foreground);
 }
 
+/* =================================
+   Reduced motion
+================================= */
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+
+  [data-reveal="pending"] {
+    opacity: 1;
+    transform: none;
   }
 }

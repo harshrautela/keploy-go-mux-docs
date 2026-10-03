@@ -1,75 +1,34 @@
 import Header from "@/components/Header";
 import Callout from "@/components/Callout";
 import TestResults from "@/components/TestResults";
+import TableOfContents from "@/components/TableOfContents";
 
 <Header />
 
 <div className="mx-auto max-w-7xl px-6">
-  <div className="grid grid-cols-1 gap-12 lg:grid-cols-[220px_minmax(0,760px)]">
+  <div className="grid grid-cols-1 gap-y-0 lg:grid-cols-[240px_minmax(0,768px)] lg:gap-x-14">
 
-    <aside className="hidden lg:block">
-      <div className="sticky top-24 py-10">
-        <div className="mb-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          On this page
-        </div>
+    <TableOfContents
+      items={[
+        { href: "#introduction", label: "Introduction" },
+        { href: "#what-youll-build", label: "What you'll build" },
+        { href: "#prerequisites", label: "Prerequisites" },
+        { href: "#setup", label: "Setup" },
+        { href: "#record-tests", label: "Record tests" },
+        { href: "#run-tests", label: "Run tests" },
+        { href: "#what-i-learned", label: "What I learned" },
+      ]}
+    />
 
-        <nav className="space-y-2 text-sm text-muted-foreground">
-          <a
-            className="block transition hover:text-foreground"
-            href="#introduction"
-          >
-            Introduction
-          </a>
+    <main id="content" className="relative isolate min-w-0 py-10 lg:py-16">
 
-          <a
-            className="block transition hover:text-foreground"
-            href="#what-youll-build"
-          >
-            What you'll build
-          </a>
+      <div className="hero-grid" aria-hidden="true" />
 
-          <a
-            className="block transition hover:text-foreground"
-            href="#prerequisites"
-          >
-            Prerequisites
-          </a>
-
-          <a
-            className="block transition hover:text-foreground"
-            href="#setup"
-          >
-            Setup
-          </a>
-
-          <a
-            className="block transition hover:text-foreground"
-            href="#record-tests"
-          >
-            Record tests
-          </a>
-
-          <a
-            className="block transition hover:text-foreground"
-            href="#run-tests"
-          >
-            Run tests
-          </a>
-
-          <a
-            className="block transition hover:text-foreground"
-            href="#lessons"
-          >
-            What I learned
-          </a>
-        </nav>
-      </div>
-    </aside>
-
-    <main className="min-w-0 py-12 lg:py-16">
-
-      <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-muted px-3 py-1.5 text-xs font-medium text-muted-foreground">
-        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+      <div className="animate-fade-rise mb-6 inline-flex items-center gap-2.5 rounded-full border border-border bg-card/80 px-3.5 py-1.5 text-xs font-medium text-muted-foreground shadow-sm backdrop-blur">
+        <span className="relative flex h-1.5 w-1.5">
+          <span className="animate-pulse-ring absolute inline-flex h-full w-full rounded-full bg-emerald-500" />
+          <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
+        </span>
         Keploy Go Quickstart
       </div>
 
@@ -84,7 +43,7 @@ import TestResults from "@/components/TestResults";
       </div>
 
       <div className="mb-8 grid grid-cols-1 gap-3 sm:grid-cols-3">
-        <div className="rounded-xl border border-border bg-card p-4">
+        <div className="rounded-xl border border-border bg-card p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-border-strong hover:bg-card-hover hover:shadow-md">
           <div className="mb-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
             Stack
           </div>
@@ -94,7 +53,7 @@ import TestResults from "@/components/TestResults";
           </div>
         </div>
 
-        <div className="rounded-xl border border-border bg-card p-4">
+        <div className="rounded-xl border border-border bg-card p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-border-strong hover:bg-card-hover hover:shadow-md">
           <div className="mb-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
             Tool
           </div>
@@ -104,7 +63,7 @@ import TestResults from "@/components/TestResults";
           </div>
         </div>
 
-        <div className="rounded-xl border border-border bg-card p-4">
+        <div className="rounded-xl border border-border bg-card p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-border-strong hover:bg-card-hover hover:shadow-md">
           <div className="mb-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
             Result
           </div>

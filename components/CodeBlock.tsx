@@ -63,6 +63,30 @@ function formatLanguage(language?: string): string {
   }
 }
 
+/** A small colour cue so block types are distinguishable at a glance. */
+function dotColor(language: string): string {
+  switch (language) {
+    case "terminal":
+      return "bg-orange-500";
+
+    case "json":
+      return "bg-amber-400";
+
+    case "go":
+      return "bg-sky-400";
+
+    case "yaml":
+    case "yml":
+      return "bg-violet-400";
+
+    case "text":
+      return "bg-zinc-400";
+
+    default:
+      return "bg-emerald-400";
+  }
+}
+
 export default function CodeBlock({
   children,
   className,
@@ -70,31 +94,39 @@ export default function CodeBlock({
 }: CodeBlockProps) {
   const code = extractText(children);
   const language = formatLanguage(dataLanguage);
+  const isTerminal = language === "terminal";
 
   return (
-    <div className="my-7 w-full overflow-hidden rounded-xl border border-zinc-200 bg-[#0d1117] shadow-sm dark:border-zinc-800">
-      <div className="flex h-11 items-center justify-between border-b border-zinc-800 bg-[#161b22] px-4">
-        <div className="flex items-center gap-2">
+    <figure className="group my-7 w-full overflow-hidden rounded-xl border border-code-border bg-code-background shadow-sm transition-colors duration-300 hover:border-border-strong">
+      <figcaption className="flex h-10 items-center justify-between gap-3 border-b border-code-border bg-code-header px-3.5">
+        <div className="flex min-w-0 items-center gap-2">
           <span
-            className="h-2 w-2 rounded-full bg-orange-500"
+            className={`h-2 w-2 shrink-0 rounded-full ${dotColor(language)}`}
             aria-hidden="true"
           />
 
-          <span className="font-mono text-xs font-medium text-zinc-400">
+          <span className="truncate font-mono text-[11px] font-medium uppercase tracking-wider text-subtle-foreground">
             {language}
           </span>
         </div>
 
-        <CopyButton text={code} />
-      </div>
+        <div className="opacity-80 transition-opacity duration-200 group-hover:opacity-100 focus-within:opacity-100">
+          <CopyButton text={code} />
+        </div>
+      </figcaption>
 
-      <div className="w-full overflow-hidden">
-        <pre
-          className={`${className ?? ""} whitespace-pre-wrap break-words`}
-        >
+      <div className="relative w-full overflow-hidden">
+        {isTerminal && (
+          <span
+            className="pointer-events-none absolute left-0 top-0 h-full w-px bg-gradient-to-b from-orange-500/50 to-transparent"
+            aria-hidden="true"
+          />
+        )}
+
+        <pre className={`${className ?? ""} whitespace-pre-wrap break-words`}>
           {children}
         </pre>
       </div>
-    </div>
+    </figure>
   );
 }
